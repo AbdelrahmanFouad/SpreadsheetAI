@@ -6,26 +6,21 @@ from pandasai.llm.base import LLM
 import google.generativeai as genai
 import re
 import io
-import chardet  # Import chardet for encoding detection
+import chardet  
 
-# Set up Streamlit page config
 st.set_page_config(layout="wide", page_title="Excelerate")
 
-# Configure Google Gemini API Key (Replace with your actual key)
 genai.configure(api_key=st.secrets["google"]["api_key"])
 
-# Helper function to remove ANSI escape sequences
 def remove_ansi_escape(text):
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
     return ansi_escape.sub('', text)
 
-# Helper function to clear session state keys
 def clear_session_keys(keys):
     for key in keys:
         if key in st.session_state:
             del st.session_state[key]
 
-# Function to extract metadata and a data sample from the DataFrame
 def extract_metadata_and_sample(df, sample_size=5):
     metadata = {
         "num_rows": df.shape[0],
@@ -36,8 +31,6 @@ def extract_metadata_and_sample(df, sample_size=5):
     sample = df.head(sample_size)
     return metadata, sample
 
-# Function to create a composite prompt.
-# The prompt instructs the LLM to generate transformation instructions for the entire DataFrame "df".
 def create_composite_prompt(user_prompt, metadata, sample):
     composite_prompt = (
         "Below is the metadata and a sample of the data:\n"
@@ -55,7 +48,6 @@ def create_composite_prompt(user_prompt, metadata, sample):
     return composite_prompt
 
 
-# Custom Google Gemini LLM
 class GoogleGeminiLLM(LLM):
     def __init__(self, model_name="gemini-2.0-flash", api_key=None):
         super().__init__()
@@ -97,7 +89,6 @@ class GoogleGeminiLLM(LLM):
             }
         return refined_output
 
-# Initialize Gemini LLM (Replace YOUR_API_KEY with your actual key)
 gemini_llm = GoogleGeminiLLM(api_key=st.secrets["google"]["api_key"])
 
 st.title("Excelerate")
@@ -108,7 +99,6 @@ uploaded_file = st.file_uploader("Choose a CSV or Excel file", type=["csv", "xls
 
 if uploaded_file is not None:
     try:
-        # Load the file into a DataFrame with chardet detection for CSV files
         if uploaded_file.name.endswith('.csv'):
             # Read file bytes and detect encoding
             file_bytes = uploaded_file.read()
@@ -120,14 +110,12 @@ if uploaded_file is not None:
         else:
             df = pd.read_excel(uploaded_file)
         
-        # Clean up column names
         df.columns = df.columns.str.replace(r'\W+', '_', regex=True)
         df.columns = [remove_ansi_escape(col) for col in df.columns]
         
         st.subheader("Original Data")
         st.dataframe(df)
         
-        # Extract metadata and sample and store in session state for consistency
         metadata, sample = extract_metadata_and_sample(df, sample_size=5)
         st.session_state["metadata"] = metadata
         st.session_state["sample"] = sample
@@ -135,11 +123,10 @@ if uploaded_file is not None:
         st.subheader("Data Sample")
         st.dataframe(sample)
         
-        # User input: transformation prompt
-        user_prompt = st.text_area("Enter your prompt for data transformation",
+        user_prompt = st.text_area("What do you want to do with this table?",
                                    "e.g., remove the second column and filter rows where age > 40")
         
-        # Refine Prompt button
+        
         if st.button("Refine Prompt", key="refine"):
             composite_prompt = create_composite_prompt(user_prompt, st.session_state["metadata"], st.session_state["sample"])
             refined_output = gemini_llm.refine_prompt(composite_prompt)
@@ -150,7 +137,7 @@ if uploaded_file is not None:
             # Provide an editable text area for the refined prompt
             st.text_area("Edit refined prompt if needed", value=refined_prompt, key="final_prompt")
         
-            # Run the refined prompt on the sample DataFrame to generate a preview
+            
             try:
                 sample_sdf = SmartDataframe(st.session_state["sample"], config={"llm": gemini_llm})
                 sample_response = sample_sdf.chat(refined_prompt)
@@ -164,7 +151,7 @@ if uploaded_file is not None:
             except Exception as e:
                 st.write("Error running transformation on sample data: ", e)
         
-        # Process Data button uses the original DataFrame (df)
+        
         if st.button("Process Data", key="process"):
             # Use the user-edited refined prompt if available; otherwise, if not refined, use the user prompt directly.
             final_prompt = st.session_state.get("final_prompt", st.session_state.get("refined_prompt", ""))
@@ -206,7 +193,7 @@ if uploaded_file is not None:
                                                file_name="modified_data.xlsx",
                                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     
-                    # Clear session keys after processing
+                    
                     clear_session_keys(["metadata", "sample", "refined_prompt", "final_prompt"])
                 except Exception as e:
                     st.error("Error processing refined prompt: " + str(e))
