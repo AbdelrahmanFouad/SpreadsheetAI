@@ -43,7 +43,7 @@ class GoogleGeminiLLM(LLM):
         return "Google Gemini"
 
 # ✅ Initialize Gemini LLM
-gemini_llm = GoogleGeminiLLM(api_key="AIzaSyCPM4iPRO1FrL1SduszTktoR_W1huGu1TA")
+gemini_llm = GoogleGeminiLLM(api_key="")
 
 # ✅ Create DataFrame
 df = pd.DataFrame({
