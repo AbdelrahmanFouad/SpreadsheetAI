@@ -45,7 +45,7 @@ class GoogleGeminiLLM(LLM):
         return "Google Gemini"
 
 # ✅ Initialize Gemini LLM
-gemini_llm = GoogleGeminiLLM(api_key="AIzaSyCPM4iPRO1FrL1SduszTktoR_W1huGu1TA")  # Replace with your API key
+gemini_llm = GoogleGeminiLLM(api_key="")  # Replace with your API key
 
 st.title("I hate excel")
 st.write("Upload a CSV or Excel file, enter your transformation prompt, and preview/download the modified data.")
