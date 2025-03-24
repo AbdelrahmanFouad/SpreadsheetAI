@@ -8,7 +8,7 @@ import io
 
 st.set_page_config(layout="wide", page_title="excel magic")
 # ✅ Configure Google Gemini API Key
-genai.configure(api_key="AIzaSyCPM4iPRO1FrL1SduszTktoR_W1huGu1TA")  # Replace with your API key
+genai.configure(api_key="")  # Replace with your API key
 
 # Function to remove ANSI escape sequences from text
 def remove_ansi_escape(text):
