@@ -12,7 +12,7 @@ import chardet  # Import chardet for encoding detection
 st.set_page_config(layout="wide", page_title="Excelerate")
 
 # Configure Google Gemini API Key (Replace with your actual key)
-genai.configure(api_key="AIzaSyCPM4iPRO1FrL1SduszTktoR_W1huGu1TA")
+genai.configure(api_key="st.secrets["google"]["api_key"]")
 
 # Helper function to remove ANSI escape sequences
 def remove_ansi_escape(text):
@@ -98,7 +98,7 @@ class GoogleGeminiLLM(LLM):
         return refined_output
 
 # Initialize Gemini LLM (Replace YOUR_API_KEY with your actual key)
-gemini_llm = GoogleGeminiLLM(api_key="AIzaSyCPM4iPRO1FrL1SduszTktoR_W1huGu1TA")
+gemini_llm = GoogleGeminiLLM(api_key="st.secrets["google"]["api_key"]")
 
 st.title("Excelerate")
 st.write("Upload a CSV or Excel file, refine your transformation prompt (or use your original prompt), and preview/download the modified data.")
