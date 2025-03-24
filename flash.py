@@ -5,7 +5,7 @@ import google.generativeai as genai
 import re
 
 # ✅ Configure Google Gemini API Key
-genai.configure(api_key="AIzaSyCPM4iPRO1FrL1SduszTktoR_W1huGu1TA")
+genai.configure(api_key="")
 
 # ✅ Custom Google Gemini LLM
 class GoogleGeminiLLM(LLM):
